@@ -10,7 +10,11 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.RotateAnimation;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -35,6 +39,7 @@ public class xTremeDefender extends AppCompatActivity {
     static int centiseconds;
     static int seconds;
     static int minutes;
+    static ImageView logo;
 
     ArrayList<Bullet> bullets;
 
@@ -53,6 +58,14 @@ public class xTremeDefender extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_x_treme_defender);
 
+        logo = findViewById(R.id.logo);
+        // Animation code taken from StackOverflow
+        RotateAnimation rotate = new RotateAnimation(0, 360, Animation.RELATIVE_TO_SELF,
+                0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        rotate.setDuration(4000);
+        rotate.setRepeatCount(Animation.INFINITE);
+        logo.setAnimation(rotate);
+
         bulletImages = new ArrayList<>();
 
         try {
@@ -62,7 +75,6 @@ public class xTremeDefender extends AppCompatActivity {
             bulletImages.add(Drawable.createFromStream(stream, null));
             stream = getAssets().open("bullet3.png");
             bulletImages.add(Drawable.createFromStream(stream, null));
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -81,11 +93,11 @@ public class xTremeDefender extends AppCompatActivity {
         textView1.setText( "Score: " + score );
 
         centiseconds = 0;
-        seconds = 20;
+        seconds = 30;
         minutes = 0;
 
-        respawnTime = 3500;
-        addedTime = 4;
+        respawnTime = 1000;
+        addedTime = 1000;
         speed = 1;
 
         timer = new Timer();
@@ -99,6 +111,8 @@ public class xTremeDefender extends AppCompatActivity {
 
         Button btn1 = findViewById(R.id.btn1);
         btn1.setVisibility(View.GONE);
+        logo.clearAnimation();
+        logo.setVisibility(View.GONE);
 
 
         timer.schedule(new TimerTask() {
@@ -149,21 +163,23 @@ public class xTremeDefender extends AppCompatActivity {
     public void updateTime() {
 
         // Level change
-        if ( score == 6 ) {
-            respawnTime = 2500;
-            addedTime = 3;
-        }
-
-        if ( score == 12 ) {
-            respawnTime = 1500;
-            addedTime = 3;
+        // Level 2.
+        if ( score == 5 ) {
+            respawnTime = 800;
+            addedTime = 600;
             speed = 2;
         }
 
-        if ( score == 18 ) {
-            respawnTime = 1000;
-            addedTime = 2;
+        if ( score == 10 ) {
+            respawnTime = 600;
+            addedTime = 300;
             speed = 3;
+        }
+
+        if ( score == 15 ) {
+            respawnTime = 400;
+            addedTime = 200;
+            speed = 4;
         }
 
         // Check if the game is not finished
@@ -192,6 +208,10 @@ public class xTremeDefender extends AppCompatActivity {
             String centsec = Integer.toString(centiseconds);
             if ( centiseconds < 10 )
                 centsec = "0" + centsec;
+
+            // A trick that temporary solves problem of added time (when the centsec has three characters).
+            if ( centiseconds > 99 )
+                centsec = centsec.substring(1, 3);
 
             textView2.setText( ( ( ( min + ":" ) + sec ) + ":" ) + centsec );
         }

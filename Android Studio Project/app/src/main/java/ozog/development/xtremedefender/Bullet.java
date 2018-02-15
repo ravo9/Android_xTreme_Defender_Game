@@ -50,7 +50,8 @@ public class Bullet {
             public void onClick(View v) {
                 iv.setVisibility(View.GONE);
                 xTremeDefender.updateScore();
-                xTremeDefender.seconds += xTremeDefender.addedTime;
+                xTremeDefender.centiseconds += ( xTremeDefender.addedTime * 0.1 );
+
             }
         });
 
