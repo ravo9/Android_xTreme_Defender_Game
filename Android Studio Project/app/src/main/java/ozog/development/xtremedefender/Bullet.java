@@ -24,7 +24,6 @@ public class Bullet {
     private Drawable d;
     private RelativeLayout rl;
     private ImageView iv;
-    private static float speed;
     private static Random generator;
     private static int screenWidth;
     private static int screenHeight;
@@ -33,7 +32,6 @@ public class Bullet {
         screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
         screenHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
         generator = new Random();
-        speed = 1;
     }
 
     public Bullet(RelativeLayout rl, final Context context, Drawable d ) {
@@ -52,6 +50,7 @@ public class Bullet {
             public void onClick(View v) {
                 iv.setVisibility(View.GONE);
                 xTremeDefender.updateScore();
+                xTremeDefender.seconds += xTremeDefender.addedTime;
             }
         });
 
@@ -66,8 +65,6 @@ public class Bullet {
         target = generateTarget(getOriginAreaNumber(origin));
 
         rl.addView(iv);
-
-        // Destroy!
     }
 
     public void updatePosition() {
@@ -82,14 +79,14 @@ public class Bullet {
         float ratio = Math.abs(target.x - x) / Math.abs(target.y - y);
 
         if ( this.target.x < x )
-            this.iv.setX( x - speed * ratio );
+            this.iv.setX( x - xTremeDefender.speed * ratio );
         else if ( this.target.x > x )
-            this.iv.setX( x + speed * ratio );
+            this.iv.setX( x + xTremeDefender.speed * ratio );
 
         if ( this.target.y < y )
-            this.iv.setY( y - speed * 1/ratio );
+            this.iv.setY( y - xTremeDefender.speed * 1/ratio );
         else if ( this.target.y > y )
-            this.iv.setY( y + speed * 1/ratio );
+            this.iv.setY( y + xTremeDefender.speed * 1/ratio );
 
         // Rotation
         this.iv.setRotation(this.iv.getRotation() + 8);
@@ -168,4 +165,7 @@ public class Bullet {
         return (new Point(x, y));
     }
 
+    public void remove() {
+        iv.setImageDrawable(null);
+    }
 }

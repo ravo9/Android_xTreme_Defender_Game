@@ -17,21 +17,24 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class xTremeDefender extends AppCompatActivity {
 
-    Drawable d;
     RelativeLayout rl;
     Context c;
 
+    boolean gameFinished;
+
     static TextView textView1;
     static TextView textView2;
-
-    int centiseconds = 0;
-    int seconds = 0;
-    int minutes = 0;
+    static ArrayList<Drawable> bulletImages;
+    static Random generator;
+    static int centiseconds;
+    static int seconds;
+    static int minutes;
 
     ArrayList<Bullet> bullets;
 
@@ -40,34 +43,58 @@ public class xTremeDefender extends AppCompatActivity {
     Timer timer3;
 
     Handler handler = new Handler();
-    static int score = 0;
+    static int score;
+    static int respawnTime;
+    static int addedTime;
+    static float speed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_x_treme_defender);
 
-        timer = new Timer();
-        timer2 = new Timer();
-        timer3 = new Timer();
+        bulletImages = new ArrayList<>();
 
         try {
             InputStream stream = getAssets().open("bullet1.png");
-            d = Drawable.createFromStream(stream, null);
+            bulletImages.add(Drawable.createFromStream(stream, null));
+            stream = getAssets().open("bullet2.png");
+            bulletImages.add(Drawable.createFromStream(stream, null));
+            stream = getAssets().open("bullet3.png");
+            bulletImages.add(Drawable.createFromStream(stream, null));
+
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         rl = findViewById(R.id.relativeLayout1);
         c = getApplicationContext();
+
         textView1 = findViewById(R.id.textView1);
         textView2 = findViewById(R.id.textView2);
 
-        bullets = new ArrayList<>();
+        generator = new Random();
     }
 
     public void newGame( View v) {
 
+        textView1.setText( "Score: " + score );
+
+        centiseconds = 0;
+        seconds = 20;
+        minutes = 0;
+
+        respawnTime = 3500;
+        addedTime = 4;
+        speed = 1;
+
+        timer = new Timer();
+        timer2 = new Timer();
+        timer3 = new Timer();
+
+        bullets = new ArrayList<>();
+
+        gameFinished = false;
         score = 0;
 
         Button btn1 = findViewById(R.id.btn1);
@@ -92,11 +119,12 @@ public class xTremeDefender extends AppCompatActivity {
                 handler.post(new Runnable() {
                     @Override
                     public void run () {
+                        Drawable d = bulletImages.get(getBulletImageNumber());
                         bullets.add(new Bullet( rl, c, d ));
                     }
                 });
             }
-        }, 0, 3500);
+        }, 0, respawnTime);
 
         timer3.schedule(new TimerTask() {
             @Override
@@ -120,40 +148,81 @@ public class xTremeDefender extends AppCompatActivity {
 
     public void updateTime() {
 
-        if ( centiseconds < 99)
-            centiseconds++;
-        else {
-            centiseconds = 0;
-
-            if ( seconds < 59)
-                seconds++;
-            else {
-                seconds = 0;
-
-                if ( minutes < 59)
-                    minutes++;
-                else
-                    minutes = 0;
-            }
+        // Level change
+        if ( score == 6 ) {
+            respawnTime = 2500;
+            addedTime = 3;
         }
 
-        String min = Integer.toString(minutes);
-        if ( minutes < 10 )
-            min = "0" + min;
+        if ( score == 12 ) {
+            respawnTime = 1500;
+            addedTime = 3;
+            speed = 2;
+        }
 
-        String sec = Integer.toString(seconds);
-        if ( seconds < 10 )
-            sec = "0" + sec;
+        if ( score == 18 ) {
+            respawnTime = 1000;
+            addedTime = 2;
+            speed = 3;
+        }
 
-        String centsec = Integer.toString(centiseconds);
-        if ( centiseconds < 10 )
-            centsec = "0" + centsec;
+        // Check if the game is not finished
+        if ( gameFinished != true ){
 
-        textView2.setText( ( ( ( min + ":" ) + sec ) + ":" ) + centsec );
+            if ( centiseconds > 0)
+                centiseconds--;
+            else if ( seconds > 0 ) {
+                seconds--;
+                centiseconds = 99;
+            } else if ( minutes > 0 ) {
+                minutes--;
+                seconds = 59;
+                centiseconds = 99;
+            } else
+                gameFinished = true;
+
+            String min = Integer.toString(minutes);
+            if ( minutes < 10 )
+                min = "0" + min;
+
+            String sec = Integer.toString(seconds);
+            if ( seconds < 10 )
+                sec = "0" + sec;
+
+            String centsec = Integer.toString(centiseconds);
+            if ( centiseconds < 10 )
+                centsec = "0" + centsec;
+
+            textView2.setText( ( ( ( min + ":" ) + sec ) + ":" ) + centsec );
+        }
+        else {
+            // If the game is over.
+            timer.cancel();
+            timer2.cancel();
+            timer3.cancel();
+
+            textView2.setText("Game over!");
+            Button btn1 = findViewById(R.id.btn1);
+            btn1.setText("Start again");
+
+
+            // Bullets removing
+            for ( Bullet b: bullets) {
+                b.remove();
+            }
+            bullets.clear();
+
+
+            btn1.setVisibility(View.VISIBLE);
+        }
     }
 
     public static void updateScore() {
         score++;
         textView1.setText( "Score: " + score );
+    }
+
+    public static int getBulletImageNumber() {
+        return generator.nextInt(bulletImages.size());
     }
 }
