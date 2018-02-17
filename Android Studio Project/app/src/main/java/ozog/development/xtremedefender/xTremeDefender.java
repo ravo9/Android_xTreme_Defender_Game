@@ -2,6 +2,7 @@ package ozog.development.xtremedefender;
 
 import android.app.ActionBar;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +18,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,12 +36,15 @@ public class xTremeDefender extends AppCompatActivity {
 
     static TextView textView1;
     static TextView textView2;
+    static TextView textView3;
     static ArrayList<Drawable> bulletImages;
     static Random generator;
     static int centiseconds;
     static int seconds;
     static int minutes;
     static ImageView logo;
+
+    SharedPreferences prefs;
 
     ArrayList<Bullet> bullets;
 
@@ -49,6 +54,7 @@ public class xTremeDefender extends AppCompatActivity {
 
     Handler handler = new Handler();
     static int score;
+    static int highScore;
     static int respawnTime;
     static int addedTime;
     static float speed;
@@ -57,6 +63,9 @@ public class xTremeDefender extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_x_treme_defender);
+
+        // Score storage
+        prefs = this.getSharedPreferences("myPrefsKey", Context.MODE_PRIVATE);
 
         logo = findViewById(R.id.logo);
         // Animation code taken from StackOverflow
@@ -84,13 +93,16 @@ public class xTremeDefender extends AppCompatActivity {
 
         textView1 = findViewById(R.id.textView1);
         textView2 = findViewById(R.id.textView2);
+        textView3 = findViewById(R.id.textView3);
+
+        // The highest score update
+        highScore = prefs.getInt("score", 0);
+        textView3.setText( "Highest score: " + highScore );
 
         generator = new Random();
     }
 
     public void newGame( View v) {
-
-        textView1.setText( "Score: " + score );
 
         centiseconds = 0;
         seconds = 30;
@@ -107,14 +119,18 @@ public class xTremeDefender extends AppCompatActivity {
         bullets = new ArrayList<>();
 
         gameFinished = false;
-        score = 0;
+        score = -1;
+        updateScore();
+
+        highScore = prefs.getInt("score", 0);
+        textView3.setText( "Highest score: " + highScore );
 
         Button btn1 = findViewById(R.id.btn1);
         btn1.setVisibility(View.GONE);
         logo.clearAnimation();
         logo.setVisibility(View.GONE);
 
-
+        // Movement
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -127,6 +143,7 @@ public class xTremeDefender extends AppCompatActivity {
             }
         }, 0, 10);
 
+        // Bullets adding
         timer2.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -140,6 +157,7 @@ public class xTremeDefender extends AppCompatActivity {
             }
         }, 0, respawnTime);
 
+        // Stopwatch update
         timer3.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -225,13 +243,18 @@ public class xTremeDefender extends AppCompatActivity {
             Button btn1 = findViewById(R.id.btn1);
             btn1.setText("Start again");
 
+            if ( highScore < score ) {
+                prefs.edit().putInt("score", score).apply();
+                Toast.makeText(c, "New record!",
+                        Toast.LENGTH_SHORT ).show();
+                textView3.setText( "Highest score: " + score );
+            }
 
             // Bullets removing
             for ( Bullet b: bullets) {
                 b.remove();
             }
             bullets.clear();
-
 
             btn1.setVisibility(View.VISIBLE);
         }

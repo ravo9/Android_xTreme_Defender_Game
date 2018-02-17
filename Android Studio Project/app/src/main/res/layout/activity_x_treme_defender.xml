@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/textView1"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="45dp"
+        android:layout_marginBottom="32dp"
         android:onClick="newGame"
         android:text="START" />
 
@@ -23,9 +23,9 @@
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/textView3"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="78dp"
+        android:layout_marginBottom="29dp"
         android:text="Score: 0"
         android:textSize="30sp" />
 
@@ -45,8 +45,18 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/btn1"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="103dp"
+        android:layout_marginBottom="92dp"
         app:srcCompat="@mipmap/ic_launcher_round" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="36dp"
+        android:text="Highest score: 0"
+        android:textSize="24sp" />
 
 
 </RelativeLayout>
