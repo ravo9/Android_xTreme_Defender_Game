@@ -3,9 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Android Studio Project.iml" filepath="$PROJECT_DIR$/Android Studio Project.iml" />
-      <module fileurl="file://C:\Users\Android\Desktop\Android_xTreme_Defender_Game\Android Studio Project\Android Studio Project.iml" filepath="C:\Users\Android\Desktop\Android_xTreme_Defender_Game\Android Studio Project\Android Studio Project.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://C:\Users\Android\Desktop\Android_xTreme_Defender_Game\Android Studio Project\app\app.iml" filepath="C:\Users\Android\Desktop\Android_xTreme_Defender_Game\Android Studio Project\app\app.iml" />
     </modules>
   </component>
 </project>

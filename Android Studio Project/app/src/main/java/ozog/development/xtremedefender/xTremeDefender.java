@@ -1,18 +1,13 @@
 package ozog.development.xtremedefender;
 
-import android.app.ActionBar;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -105,8 +100,8 @@ public class xTremeDefender extends AppCompatActivity {
     public void newGame( View v) {
 
         centiseconds = 0;
-        seconds = 30;
-        minutes = 0;
+        seconds = 0;
+        minutes = 1;
 
         respawnTime = 1000;
         addedTime = 1000;
@@ -182,22 +177,28 @@ public class xTremeDefender extends AppCompatActivity {
 
         // Level change
         // Level 2.
-        if ( score == 5 ) {
+        if ( score == 7 ) {
             respawnTime = 800;
             addedTime = 600;
             speed = 2;
         }
 
-        if ( score == 10 ) {
+        if ( score == 15 ) {
             respawnTime = 600;
             addedTime = 300;
             speed = 3;
         }
 
-        if ( score == 15 ) {
-            respawnTime = 400;
+        if ( score == 22 ) {
+            respawnTime = 300;
             addedTime = 200;
             speed = 4;
+        }
+
+        if ( score == 30 ) {
+            respawnTime = 200;
+            addedTime = 200;
+            speed = 6;
         }
 
         // Check if the game is not finished
